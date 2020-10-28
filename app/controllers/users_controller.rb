@@ -23,8 +23,12 @@ def update
   flash[:success] = "Your account was updated successfully"
     redirect_to articles_path
   else
-    render 'edit'  
+    render 'edit'
   end
+end
+
+def show
+  @user = User.find(params[:id])
 end
 
 private
