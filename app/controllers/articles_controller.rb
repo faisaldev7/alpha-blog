@@ -1,4 +1,7 @@
 class ArticlesController < ApplicationController
+  before_action :set_article, only: [:edit, :update, :show, :destroy]
+  before_action :require_user, except: [:index, :show]
+  before_action :require_same_user, only: [:edit, :update, :destroy]
 
 def index
   @articles= Article.all
@@ -9,7 +12,7 @@ end
   end
 
   def edit
-    @article= Article.find(params[:id])
+
   end
 
   def create
@@ -25,7 +28,7 @@ end
   end
 
   def update
-    @article= Article.find(params[:id])
+
     if @article.update(article_params)
       flash[:success]="Article was successfully updated"
       redirect_to article_path(@article)
@@ -34,11 +37,11 @@ end
     end
   end
   def show
-    @article= Article.find(params[:id])
+
   end
 
   def destroy
-    @article= Article.find(params[:id])
+
     @article.destroy
     flash[:danger]="Article was successfully deleted"
     redirect_to articles_path
@@ -47,6 +50,17 @@ end
   private
   def article_params
     params.require(:article).permit(:title, :description)
+  end
+
+  def set_article
+    @article= Article.find(params[:id])
+  end
+
+  def require_same_user
+    if current_user != @article.user
+       flash[:danger]="You can only edit or delete your own articles"
+       redirect_to root_path
+    end
   end
 
 end
